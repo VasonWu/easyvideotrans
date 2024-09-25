@@ -40,7 +40,10 @@ def batch():
                 video_files.append(os.path.join(root, file))
 
     for video_path in video_files:
-        process_video(video_path, config)
+        try:
+            process_video(video_path, config)
+        except Exception as e:
+            print(f"处理视频 '{video_path}' 时发生错误: {e}")            
 
 # 处理单个视频文件
 def process_video(video_path, config):
