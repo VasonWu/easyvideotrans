@@ -62,6 +62,9 @@ def process_video(video_path, config):
     # 4. 翻译成中文
     translate_to_zh(video_path, video_dir)
 
+    # 4.1 识别性别
+    gender_recognition(video_path, video_dir)
+
     # 5. 文本转语音
     tts(video_path, video_dir)
 
@@ -164,13 +167,52 @@ def translate_to_zh(video_path, video_dir):
     except ValueError as e:
         print(f"Error: {str(e)}")
 
+# 识别性别
+def gender_recognition(video_path, video_dir):
+    video_name = os.path.basename(video_path)
+    audio_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_no_bg.wav')
+    srt_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_merged.srt')
+    srt_gender_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_merged_gender.srt')
+    
+    # 调用gender_recognition 接口，识别gender，保存到srt_gender_path
+
+    print("gender recognition finished")
+
+# 识别性别
+def gender_recognition(video_path, video_dir):
+    video_name = os.path.basename(video_path)
+    audio_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_no_bg.wav')
+    srt_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_merged.srt')
+    srt_gender_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_merged_gender.srt')
+
+    # 准备请求的文件
+    files = {
+        'wav': open(audio_path, 'rb'),
+        'srt': open(srt_path, 'rb')
+    }
+
+    # 调用gendered_srt API
+    response = requests.post('http://192.168.150.181:5000/gender_recognition', files=files)
+
+    if response.status_code == 200:
+        # 提取API返回的带有性别标注的SRT内容
+        srt_content_with_gender = response.json().get('srt')
+
+        # 保存带有性别标注的SRT文件
+        with open(srt_gender_path, 'w', encoding='utf-8') as f:
+            f.write(srt_content_with_gender)
+
+        print("gender recognition finished and saved to:", srt_gender_path)
+    else:
+        print(f"Failed to recognize gender. Status code: {response.status_code}, Error: {response.text}")
+
 # 文本转语音
 def tts(video_path, video_dir):
     video_name = os.path.basename(video_path)
-    srt_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_merged.srt')
+    srt_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_merged_gender.srt')
     tts_dir = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_source')
     #character = "zh-CN-XiaoyiNeural" #female
-    character = "zh-CN-YunjianNeural" #male
+    character = ["zh-CN-YunjianNeural", "zh-CN-XiaoyiNeural"] #male
     
     if os.path.exists(tts_dir):
         # delete old tts dir

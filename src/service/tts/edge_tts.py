@@ -9,11 +9,16 @@ from src.service.tts.tts_client import TTSClient
 
 
 class EdgeTTSClient(TTSClient):
-    def __init__(self, character="zh-CN-XiaoyiNeural"):
+    def __init__(self, character=["zh-CN-YunjianNeural", "zh-CN-XiaoyiNeural"]):
         self.character = character
 
-    async def _convert_srt_to_voice_edge(self, text, path):
-        communicate = edge_tts.Communicate(text, self.character)
+    async def _convert_srt_to_voice_edge(self, text, path, gender):
+        if gender == 'M':
+            communicate = edge_tts.Communicate(text, self.character[0])
+        elif gender == 'F':
+            communicate = edge_tts.Communicate(text, self.character[1])
+        else:
+            communicate = edge_tts.Communicate(text, self.character[0])
         await communicate.save(path)
 
     @staticmethod
@@ -57,7 +62,20 @@ class EdgeTTSClient(TTSClient):
             output_mp3_path = os.path.join(output_dir, file_mp3_name)
             file_mp3_names.append(file_mp3_name)
             file_names.append(file_name)
-            coroutines.append(self._convert_srt_to_voice_edge(sub_title.content, output_mp3_path))
+
+            # 判断性别并去除前缀
+            content = sub_title.content
+            if content.startswith("[F]"):
+                gender = 'F'
+                content = content[3:]  # 去掉[F]前缀
+            elif content.startswith("[M]"):
+                gender = 'M'
+                content = content[3:]  # 去掉[M]前缀
+            else:
+                gender = None  # 如果没有前缀，性别为None或其他默认值
+
+            # 调用方法，传入content和gender
+            coroutines.append(self._convert_srt_to_voice_edge(content, output_mp3_path, gender))
 
         EdgeTTSClient._run_convert_srt_to_voice_edge_coroutines(coroutines)
 
