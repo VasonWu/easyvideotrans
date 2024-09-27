@@ -9,7 +9,7 @@ from src.service.tts.tts_client import TTSClient
 
 
 class EdgeTTSClient(TTSClient):
-    def __init__(self, character=["zh-CN-YunjianNeural", "zh-CN-XiaoyiNeural"]):
+    def __init__(self, character=["zh-CN-YunjianNeural", "zh-CN-XiaochenNeural"]):
         self.character = character
 
     async def _convert_srt_to_voice_edge(self, text, path, gender):

@@ -212,7 +212,7 @@ def tts(video_path, video_dir):
     srt_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_merged_gender.srt')
     tts_dir = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_source')
     #character = "zh-CN-XiaoyiNeural" #female
-    character = ["zh-CN-YunjianNeural", "zh-CN-XiaoyiNeural"] #male
+    character = ["zh-CN-YunjianNeural", "zh-CN-XiaochenNeural"] #male
     
     if os.path.exists(tts_dir):
         # delete old tts dir
@@ -249,7 +249,7 @@ def video_preview(video_path, video_dir):
     audio_bg_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_bg.wav')
     video_save_path = os.path.join(video_dir, video_name)
     video_fhd_save_path = os.path.join(video_dir, f"{os.path.splitext(video_name)[0]}_fhd.mp4")
-    video_out_path = os.path.join(video_dir, f"{os.path.splitext(video_name)[0]}_preview.mp4")
+    video_out_path = os.path.join(video_dir, f"out/{os.path.splitext(video_name)[0]}.mp4")
 
     if not os.path.exists(voice_connect_path) or not os.path.exists(audio_bg_path):
         print(f'Warning: Chinese Voice {os.path.basename(voice_connect_path)} not found in {voice_connect_path}')
