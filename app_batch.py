@@ -212,7 +212,7 @@ def tts(video_path, video_dir):
     srt_path = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_merged_gender.srt')
     tts_dir = os.path.join(video_dir, f'{os.path.splitext(video_name)[0]}_zh_source')
     #character = "zh-CN-XiaoyiNeural" #female
-    character = ["zh-CN-YunjianNeural", "zh-CN-XiaochenNeural"] #male
+    character = ["zh-CN-YunjianNeural", "zh-CN-XiaoxiaoNeural"] #male
     
     if os.path.exists(tts_dir):
         # delete old tts dir
